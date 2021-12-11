@@ -1,6 +1,8 @@
 import string
+import functools
 
 
+@functools.total_ordering
 class Version:
 
     def __init__(self, version):
@@ -15,14 +17,15 @@ class Version:
             version2.extend(['0'] * (len(version1) - len(version2)))
         elif len(version2) > len(version1):
             version1.extend(['0'] * (len(version2) - len(version1)))
-        for _ in range(len(version1)):
 
+        for _ in range(len(version1)):
             if _ >= 3:
                 if version1[_] == '0' or version2[_] == '0':
                     result_true, result_false = result_false, result_true
             else:
                 version1[_] = ''.join([x for x in version1[_] if x not in string.ascii_letters])
                 version2[_] = ''.join([x for x in version2[_] if x not in string.ascii_letters])
+
             if version1[_] > version2[_]:
                 return result_true
             elif version2[_] > version1[_]:
@@ -30,6 +33,8 @@ class Version:
 
     def __eq__(self, other):
         _equality = False
+        if not isinstance(other, Version):
+            return Version.__eq__(self, Version(other))
         if len(self.version) == len(other.version):
             for _ in range(len(self.version)):
                 if self.version[_] != other.version[_]:
@@ -39,16 +44,9 @@ class Version:
         return _equality
 
     def __gt__(self, other):
-        return True if Version.__compare(self.version, other.version) else False
-
-    def __ge__(self, other):
-        return Version.__eq__(self, other) or Version.__gt__(self, other)
-
-    def __lt__(self, other):
-        return False if Version.__compare(self.version, other.version) else True
-
-    def __le__(self, other):
-        return Version.__eq__(self, other) or Version.__lt__(self, other)
+        if not isinstance(other, Version):
+            return Version.__gt__(self, Version(other))
+        return Version.__compare(self.version, other.version)
 
 
 def main():
@@ -70,3 +68,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    print('1.5'<'10')
