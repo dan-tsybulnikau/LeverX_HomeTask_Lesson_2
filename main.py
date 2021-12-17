@@ -97,4 +97,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
+    print(Version('1.4ac5.6') < Version('1.4ac6.6'))
